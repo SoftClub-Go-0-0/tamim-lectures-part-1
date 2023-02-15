@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	// "math"
+)
 
 func main() {
 	// var name string
@@ -9,7 +12,7 @@ func main() {
 	// println("Welcome to golang course", name)
 
 	var age, phone_number, salary int
-	var name,surname string
+	var name, surname string
 	fmt.Print("What is your name ? ")
 	fmt.Scanf("%s", &name)
 
@@ -25,5 +28,5 @@ func main() {
 	fmt.Print("What is your phone number ? ")
 	fmt.Scanf("%d", &phone_number)
 
-	fmt.Println("Welcome Mr/Miss",name,surname,"Your are",age,"and your phone number is",phone_number)
+	fmt.Println("Welcome Mr/Miss", name, surname, "Your are", age, "and your phone number is", phone_number)
 }
