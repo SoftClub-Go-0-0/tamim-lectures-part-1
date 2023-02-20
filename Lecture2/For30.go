@@ -11,7 +11,7 @@ func main() {
 	d := math.Abs(a - b)
 	each := d / n
 	for i := 0; i < int(n); i++ {
-		fmt.Println(1 - math.Sin(a + (each*i)))
+		fmt.Println(1 - math.Sin(a+(each*float64(i))))
 	}
 	// Still got a error
 }
