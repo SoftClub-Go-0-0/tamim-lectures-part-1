@@ -1,8 +1,9 @@
 package models
+
 import (
+	"educationalCenter/helpers"
 	"fmt"
 	"math/rand"
-	"educationalCenter/models"
 )
 
 type Company struct {
@@ -60,8 +61,8 @@ func NewCompany() Company {
 	var company Company
 
 	company.ID = rand.Intn(60) + 1
-	company.Name = RandStringBytes(5)
-	company.Location = RandStringBytes(10)
+	company.Name = helpers.RandStringBytes(5)
+	company.Location = helpers.RandStringBytes(10)
 	company.YearOfFoundation = rand.Intn(1000) + 1000
 	company.CurrentYearIncome = rand.Intn(1000000) + 1
 	company.PreviousYearIncome = rand.Intn(1000000) + 1

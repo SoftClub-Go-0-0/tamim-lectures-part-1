@@ -1,192 +1,14 @@
-package main
+package database
 
-import "fmt"
+import "educationalCenter/models"
 
-func main() {
-	var command int
-	for {
-		fmt.Println("Введите команду 0-9")
-		fmt.Printf("\t0 - выход\n")
-		fmt.Printf("\t1 - список всех преподавателей\n\t2 - поиск преподавателя по ID\n\t3 - поиск преподавателя по другим параметрам\n")
-		fmt.Printf("\t4 - список всех групп\n\t5 - поиск группы по ID\n\t6 - поиск группы по названию\n")
-		fmt.Printf("\t7 - список всех студентов\n\t8 - поиск студента по ID\n\t9 - поиск студента по другим параметрам\n")
-		fmt.Scan(&command)
-
-		switch command {
-		case 1:
-			fmt.Println("Список всех преподавателей центра:")
-			for _, tutor := range db.GetTutors() {
-				fmt.Println(tutor)
-			}
-		case 2:
-			var id uint
-			fmt.Println("Введите ID преподавателя:")
-			fmt.Scan(&id)
-			fmt.Println("Результат поиска:")
-			fmt.Println(db.GetTutor(id))
-		case 3:
-			var query string
-			fmt.Println("Введите имя, фамилию или номера телефона преподавателя:")
-			fmt.Scan(&query)
-			fmt.Println("Результат поиска:")
-			fmt.Println(db.SearchTutor(query))
-		case 4:
-			fmt.Println("Список всех групп центра:")
-			for _, group := range db.GetGroups() {
-				fmt.Println(group.ID, group.Title)
-			}
-		case 5:
-			var id uint
-			fmt.Println("Введите ID группы:")
-			fmt.Scan(&id)
-			fmt.Println("Результат поиска:")
-			group := db.GetGroup(id)
-			fmt.Println(group.ID, group.Title)
-			fmt.Println("Преподаватель:", group.Tutor)
-			fmt.Println("Студенты:")
-			for _, student := range group.Students {
-				fmt.Println(student)
-			}
-		case 6:
-			var query string
-			fmt.Println("Введите название группы:")
-			fmt.Scan(&query)
-			fmt.Println("Результат поиска:")
-			group := db.SearchGroup(query)
-			fmt.Println(group.ID, group.Title)
-			fmt.Println("Преподаватель:", group.Tutor)
-			fmt.Println("Студенты:")
-			for _, student := range group.Students {
-				fmt.Println(student)
-			}
-		case 7:
-			fmt.Println("Список всех студентов центра:")
-			for _, student := range db.GetStudents() {
-				fmt.Println(student)
-			}
-		case 8:
-			var id uint
-			fmt.Println("Введите ID студента:")
-			fmt.Scan(&id)
-			fmt.Println("Результат поиска:")
-			fmt.Println(db.GetStudent(id))
-		case 9:
-			var query string
-			fmt.Println("Введите имя, фамилию или номера телефона студента:")
-			fmt.Scan(&query)
-			fmt.Println("Результат поиска:")
-			fmt.Println(db.SearchStudent(query))
-		case 0:
-			fmt.Println("Bye!")
-			return
-		}
-	}
+var DB = models.DB{
+	Tutors:   tutors,
+	Groups:   groups,
+	Students: append(students, groups[2].Students...),
 }
 
-type Person struct {
-	ID      uint
-	Name    string
-	Surname string
-	Phone   string
-}
-
-type Student struct {
-	Person         Person
-	GroupID        uint
-	Grades         map[string]int
-	TopicsToWorkOn []string
-}
-type Group struct {
-	ID       uint
-	Title    string
-	Tutor    Person
-	Students []Student
-}
-
-type DB struct {
-	tutors   []Person
-	groups   []Group
-	students []Student
-}
-
-func (d *DB) GetTutors() []Person {
-	return d.tutors
-}
-
-func (d *DB) GetTutor(id uint) Person {
-	for i := 0; i < len(d.tutors); i++ {
-		if d.tutors[i].ID == id {
-			return d.tutors[i]
-		}
-	}
-	return Person{}
-}
-
-func (d *DB) SearchTutor(query string) Person {
-	for i := 0; i < len(d.tutors); i++ {
-		if d.tutors[i].Name == query {
-			return d.tutors[i]
-		}
-	}
-	return Person{}
-}
-
-// group methods
-
-func (d *DB) GetGroups() []Group {
-	return d.groups
-}
-
-func (d *DB) GetGroup(id uint) Group {
-	for i := 0; i < len(d.groups); i++ {
-		if uint(d.groups[i].ID) == id {
-			return d.groups[i]
-		}
-	}
-	return Group{}
-}
-
-func (d *DB) SearchGroup(query string) Group {
-	for i := 0; i < len(d.groups); i++ {
-		if d.groups[i].Title == query {
-			return d.groups[i]
-		}
-	}
-	return Group{}
-}
-
-// student methods
-
-func (d *DB) GetStudents() []Student {
-	return d.students
-}
-
-func (d *DB) GetStudent(id uint) Student {
-	for i := 0; i < len(d.students); i++ {
-		if d.students[i].Person.ID == id {
-			return d.students[i]
-		}
-	}
-	return Student{}
-}
-
-func (d *DB) SearchStudent(query string) Student {
-	for i := 0; i < len(d.students); i++ {
-		if d.students[i].Person.Name == query {
-			return d.students[i]
-		}
-	}
-	return Student{}
-}
-
-// инициализация базы данных
-var db = DB{
-	tutors:   tutors,
-	groups:   groups,
-	students: append(students, groups[2].Students...),
-}
-
-var tutors = []Person{
+var tutors = []models.Person{
 	{
 		ID:      1,
 		Name:    "Nurullah",
@@ -207,14 +29,14 @@ var tutors = []Person{
 	},
 }
 
-var groups = []Group{
+var groups = []models.Group{
 	{
 		ID:    1,
 		Title: "C#",
 		Tutor: tutors[0],
-		Students: []Student{
+		Students: []models.Student{
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      4,
 					Name:    "John",
 					Surname: "Doe",
@@ -230,7 +52,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      5,
 					Name:    "Oliver",
 					Surname: "William",
@@ -246,7 +68,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      6,
 					Name:    "Jack",
 					Surname: "Henry",
@@ -262,7 +84,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      7,
 					Name:    "Jackson",
 					Surname: "Mateo",
@@ -278,7 +100,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      8,
 					Name:    "Daniel",
 					Surname: "Logan",
@@ -294,7 +116,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      9,
 					Name:    "Samuel",
 					Surname: "Jacob",
@@ -315,9 +137,9 @@ var groups = []Group{
 		ID:    2,
 		Title: "C++",
 		Tutor: tutors[1],
-		Students: []Student{
+		Students: []models.Student{
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      10,
 					Name:    "John",
 					Surname: "Joseph",
@@ -333,7 +155,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      11,
 					Name:    "David",
 					Surname: "Hudson",
@@ -349,7 +171,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      12,
 					Name:    "Jack",
 					Surname: "Henry",
@@ -365,7 +187,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      13,
 					Name:    "Leo",
 					Surname: "Matthew",
@@ -381,7 +203,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      14,
 					Name:    "Daniel",
 					Surname: "Luke",
@@ -397,7 +219,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      15,
 					Name:    "Carter",
 					Surname: "Jacob",
@@ -418,9 +240,9 @@ var groups = []Group{
 		ID:    3,
 		Title: "Go",
 		Tutor: tutors[2],
-		Students: []Student{
+		Students: []models.Student{
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      16,
 					Name:    "Alisher",
 					Surname: "Yoqubov",
@@ -436,7 +258,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      17,
 					Name:    "Amir",
 					Surname: "Arifjonov",
@@ -452,7 +274,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      18,
 					Name:    "Behruz",
 					Surname: "Shodiev",
@@ -468,7 +290,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      19,
 					Name:    "Farhod",
 					Surname: "Olimzoda",
@@ -484,7 +306,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      20,
 					Name:    "Foziljon",
 					Surname: "Muminov",
@@ -500,7 +322,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      21,
 					Name:    "Alijon",
 					Surname: "Boboyorov",
@@ -516,7 +338,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      22,
 					Name:    "Khurshed",
 					Surname: "Rahimov",
@@ -532,7 +354,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      23,
 					Name:    "Mehrdod",
 					Surname: "Rahmatov",
@@ -548,7 +370,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      24,
 					Name:    "Muhammad",
 					Surname: "Hoshimov",
@@ -564,7 +386,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      25,
 					Name:    "Muhammad",
 					Surname: "Khujaev",
@@ -580,7 +402,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      26,
 					Name:    "Nozim",
 					Surname: "Safarov",
@@ -596,7 +418,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      27,
 					Name:    "Sunatullo",
 					Surname: "Gafurov",
@@ -612,7 +434,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      28,
 					Name:    "Tamim",
 					Surname: "Orif",
@@ -628,7 +450,7 @@ var groups = []Group{
 				TopicsToWorkOn: nil,
 			},
 			{
-				Person: Person{
+				Person: models.Person{
 					ID:      29,
 					Name:    "Zohira",
 					Surname: "Furmal",
@@ -648,5 +470,3 @@ var groups = []Group{
 }
 
 var students = append(groups[0].Students, groups[1].Students...)
-
-// Start working from here

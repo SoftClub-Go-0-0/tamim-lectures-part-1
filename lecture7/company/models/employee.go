@@ -1,9 +1,9 @@
 package models
 
 import (
+	"educationalCenter/helpers"
 	"math/rand"
 	"time"
-	"educationalCenter/models"
 )
 
 type Employee struct {
@@ -27,15 +27,15 @@ func NewEmployee(companyID int) Employee {
 
 	employee.ID = rand.Intn(2000) + 1
 	employee.CompanyID = companyID
-	employee.Name = RandStringBytes(5)
-	employee.Surname = RandStringBytes(15)
-	employee.Email = RandStringBytes(10)
+	employee.Name = helpers.RandStringBytes(5)
+	employee.Surname = helpers.RandStringBytes(15)
+	employee.Email = helpers.RandStringBytes(10)
 
 	years := rand.Intn(5)
 	months := rand.Intn(12)
 
 	employee.DateOfJoining = time.Now().AddDate(-years, -months, 0)
-	employee.Position = RandStringBytes(10)
+	employee.Position = helpers.RandStringBytes(10)
 	employee.Salary = rand.Intn(6000) + 1 + 1000
 
 	return employee
