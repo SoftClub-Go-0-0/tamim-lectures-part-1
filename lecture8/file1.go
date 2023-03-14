@@ -11,7 +11,6 @@ func main() {
 
 	f, err := os.Create(filename)
 	if err != nil {
-		//log.Fatal(err)
 		fmt.Println(err)
 		fmt.Println(false)
 		return
